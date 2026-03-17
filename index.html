@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Lensight 2.1 — See Beyond Vision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ── RESET & BASE ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F9FAFB; --bg2:#FFFFFF;
+  --primary:#0F172A; --accent:#2563EB;
+  --soft:#22C55E; --highlight:#EAB308;
+  --muted:#64748B; --border:#E2E8F0;
+  --radius:14px;
+  --shadow:0 4px 16px rgba(15,23,42,0.10);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--primary);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Sora',sans-serif;line-height:1.2}
+img,canvas,video{display:block;max-width:100%}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(249,250,251,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 20px;height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-brand{font-family:'Sora',sans-serif;font-weight:800;font-size:1.1rem;color:var(--primary);letter-spacing:-0.02em}
+.nav-brand em{color:var(--accent);font-style:normal}
+.nav-btn{
+  background:var(--accent);color:#fff;border:none;
+  padding:7px 18px;border-radius:50px;
+  font-family:'Sora',sans-serif;font-size:0.8rem;font-weight:700;
+  cursor:pointer;transition:opacity 0.2s;letter-spacing:0.01em;
+}
+.nav-btn:hover{opacity:0.88}
+
+/* ── LAYOUT ── */
+section{padding:64px 20px}
+.wrap{max-width:680px;margin:0 auto}
+
+/* ── TYPOGRAPHY ── */
+.eyebrow{font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.section-title{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;color:var(--primary);letter-spacing:-0.025em;margin-bottom:16px}
+.section-body{font-size:0.95rem;color:var(--muted);line-height:1.75}
+
+/* ── HERO ── */
+#hero{
+  min-height:calc(100vh - 56px);
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,#F0F4FF 0%,#F9FAFB 50%,#F0FFF4 100%);
+  padding:48px 20px;text-align:center;position:relative;overflow:hidden;
+}
+#hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 50% at 50% 40%,rgba(37,99,235,0.07) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-content{position:relative;z-index:1;max-width:560px}
+.hero-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.18);
+  color:var(--accent);border-radius:50px;padding:5px 14px;
+  font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:24px;
+}
+.hero-pill-dot{width:6px;height:6px;border-radius:50%;background:var(--soft);animation:blink 2s ease infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.hero-title{font-size:clamp(2.8rem,9vw,5rem);font-weight:800;color:var(--primary);letter-spacing:-0.04em;margin-bottom:8px}
+.hero-title em{color:var(--accent);font-style:normal}
+.hero-tagline{font-family:'Sora',sans-serif;font-size:1rem;font-weight:300;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:24px}
+.hero-sub{font-size:1rem;color:var(--muted);max-width:420px;margin:0 auto 36px;line-height:1.65}
+.hero-badges{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:36px}
+.badge{font-size:0.72rem;font-weight:600;padding:5px 12px;border-radius:50px;border:1px solid var(--border);color:var(--muted);background:var(--bg2)}
+.hero-cta{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--primary);color:#fff;
+  padding:13px 28px;border-radius:50px;
+  font-family:'Sora',sans-serif;font-size:0.9rem;font-weight:700;
+  cursor:pointer;border:none;transition:transform 0.2s,box-shadow 0.2s;
+  box-shadow:0 4px 20px rgba(15,23,42,0.25);
+}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(15,23,42,0.3)}
+.hero-cta svg{width:18px;height:18px}
+.hero-scroll{margin-top:48px;display:flex;flex-direction:column;align-items:center;gap:6px;color:rgba(100,116,139,0.5);font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase}
+.hero-scroll-line{width:1px;height:36px;background:linear-gradient(180deg,rgba(37,99,235,0.5),transparent)}
+
+/* ── INSIGHT ── */
+#insight{background:var(--bg2);border-top:1px solid var(--border)}
+.insight-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-top:36px}
+.insight-card{
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:22px 20px;
+  transition:box-shadow 0.2s,transform 0.2s;
+}
+.insight-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.insight-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:14px}
+.insight-card h4{font-size:0.9rem;font-weight:700;margin-bottom:6px;color:var(--primary)}
+.insight-card p{font-size:0.82rem;color:var(--muted);line-height:1.6}
+
+/* ── INSTRUCTIONS ── */
+#instructions{background:var(--bg)}
+.steps{display:flex;flex-direction:column;gap:12px;margin-top:32px}
+.step{
+  display:flex;align-items:flex-start;gap:16px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;
+  transition:border-color 0.2s;
+}
+.step:hover{border-color:var(--accent)}
+.step-num{
+  width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  background:var(--primary);color:#fff;
+  font-family:'Sora',sans-serif;font-size:0.85rem;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+}
+.step-body h4{font-size:0.9rem;font-weight:700;margin-bottom:3px}
+.step-body p{font-size:0.82rem;color:var(--muted)}
+
+/* ── SCANNER ── */
+#scanner{background:var(--primary)}
+#scanner .eyebrow{color:rgba(34,197,94,0.9)}
+#scanner .section-title{color:#fff}
+#scanner .section-body{color:rgba(255,255,255,0.55)}
+.scanner-card{
+  margin-top:28px;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+  border-radius:20px;padding:20px;
+}
+.video-container{position:relative;border-radius:12px;overflow:hidden;background:#000;aspect-ratio:4/3}
+#liveVideo{width:100%;height:100%;object-fit:cover}
+.cam-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.align-ring{
+  width:min(200px,55%);aspect-ratio:1;border-radius:50%;
+  border:2px solid rgba(34,197,94,0.8);
+  box-shadow:0 0 0 1px rgba(34,197,94,0.2),inset 0 0 20px rgba(34,197,94,0.05);
+  position:relative;
+}
+.align-ring::before,.align-ring::after{content:'';position:absolute;background:rgba(34,197,94,0.7)}
+.align-ring::before{width:1px;height:20px;left:50%;top:50%;transform:translate(-50%,-50%)}
+.align-ring::after{height:1px;width:20px;left:50%;top:50%;transform:translate(-50%,-50%)}
+.cam-label{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-size:0.72rem;color:rgba(255,255,255,0.6);font-weight:500;letter-spacing:0.04em}
+.cam-controls{display:flex;gap:10px;margin-top:14px}
+.cam-btn{
+  flex:1;padding:11px;border-radius:10px;
+  border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;
+  font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:600;
+  cursor:pointer;transition:background 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+}
+.cam-btn:hover{background:rgba(255,255,255,0.13)}
+.cam-btn:disabled{opacity:0.35;cursor:not-allowed}
+.cam-btn.active{background:rgba(34,197,94,0.2);border-color:rgba(34,197,94,0.5);color:#4ade80}
+.capture-btn{
+  width:100%;margin-top:14px;padding:14px;border-radius:50px;border:none;
+  background:linear-gradient(135deg,#22C55E,#16A34A);
+  color:#fff;font-family:'Sora',sans-serif;font-size:0.95rem;font-weight:700;
+  cursor:pointer;transition:opacity 0.2s,transform 0.2s;
+  box-shadow:0 4px 16px rgba(34,197,94,0.35);
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.capture-btn:hover{opacity:0.9;transform:translateY(-1px)}
+.capture-btn:disabled{opacity:0.35;cursor:not-allowed;transform:none;box-shadow:none}
+.cam-status{margin-top:10px;font-size:0.75rem;color:rgba(255,255,255,0.4);text-align:center;letter-spacing:0.02em}
+.cam-status.ok{color:rgba(34,197,94,0.8)}
+.cam-status.err{color:rgba(239,68,68,0.8)}
+
+/* ── CROP ── */
+#cropSection{background:var(--bg2);border-top:1px solid var(--border)}
+.crop-card{margin-top:28px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:20px}
+.crop-wrap{
+  position:relative;border-radius:12px;overflow:hidden;
+  background:#0F172A;min-height:200px;
+  display:flex;align-items:center;justify-content:center;
+}
+#captureCanvas{display:block;max-width:100%}
+.crop-box{
+  position:absolute;border:2px solid var(--accent);
+  box-shadow:0 0 0 9999px rgba(0,0,0,0.5);
+  cursor:move;touch-action:none;display:none;
+}
+.crop-corner{position:absolute;width:12px;height:12px;background:var(--accent);border-radius:3px}
+.crop-corner.tl{top:-1px;left:-1px;cursor:nwse-resize}
+.crop-corner.tr{top:-1px;right:-1px;cursor:nesw-resize}
+.crop-corner.bl{bottom:-1px;left:-1px;cursor:nesw-resize}
+.crop-corner.br{bottom:-1px;right:-1px;cursor:nwse-resize;touch-action:none}
+.crop-empty{
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  padding:48px 20px;color:rgba(255,255,255,0.25);text-align:center;
+}
+.crop-empty p{font-size:0.85rem}
+.crop-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.act-btn{
+  flex:1;min-width:110px;padding:11px 16px;border-radius:10px;border:none;
+  cursor:pointer;font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;transition:all 0.2s;
+}
+.act-retake{background:var(--bg2);color:var(--muted);border:1px solid var(--border)}
+.act-retake:hover{border-color:var(--accent);color:var(--accent)}
+.act-confirm{background:var(--accent);color:#fff;box-shadow:0 3px 12px rgba(37,99,235,0.35)}
+.act-confirm:hover{background:#1D4ED8}
+.act-confirm:disabled{opacity:0.35;cursor:not-allowed;box-shadow:none}
+.crop-hint{margin-top:10px;font-size:0.75rem;color:var(--muted);text-align:center}
+
+/* ── ANALYSIS ── */
+#analysisSection{background:var(--bg);border-top:1px solid var(--border)}
+.analysis-idle{
+  margin-top:28px;text-align:center;padding:36px 20px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:20px;color:var(--muted);
+}
+.analysis-idle p{font-size:0.88rem;margin-top:8px}
+.run-btn{
+  display:inline-flex;align-items:center;gap:9px;
+  margin-top:20px;padding:12px 28px;border-radius:50px;
+  background:var(--accent);color:#fff;border:none;
+  font-family:'Sora',sans-serif;font-size:0.9rem;font-weight:700;
+  cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(37,99,235,0.3);
+}
+.run-btn:hover{background:#1D4ED8;transform:translateY(-1px)}
+.run-btn:disabled{opacity:0.35;cursor:not-allowed;transform:none}
+.analysis-progress{
+  display:none;margin-top:28px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:24px;
+}
+.progress-track{background:var(--border);border-radius:50px;height:6px;overflow:hidden;margin:16px 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--soft));border-radius:50px;width:0%;transition:width 0.4s ease}
+.progress-steps{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.progress-step{
+  display:flex;align-items:center;gap:10px;
+  font-size:0.8rem;color:var(--muted);padding:6px 10px;border-radius:8px;transition:all 0.2s;
+}
+.progress-step.active{color:var(--accent);background:rgba(37,99,235,0.07);font-weight:600}
+.progress-step.done{color:var(--soft)}
+.progress-step-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+.progress-label{font-size:0.8rem;color:var(--muted);font-weight:500}
+
+/* ── RESULTS ── */
+#results{background:var(--bg2);border-top:1px solid var(--border)}
+.results-empty{
+  margin-top:28px;text-align:center;padding:36px 20px;
+  background:var(--bg);border:1px solid var(--border);border-radius:20px;
+  color:var(--muted);font-size:0.88rem;
+}
+.results-panel{margin-top:28px;display:flex;flex-direction:column;gap:20px}
+.score-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.score-card{background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:22px 18px;text-align:center}
+.score-card.primary{background:linear-gradient(145deg,var(--primary),#1e293b);border-color:transparent}
+.score-label{font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.primary .score-label{color:rgba(255,255,255,0.45)}
+.score-value{font-family:'Sora',sans-serif;font-size:2.8rem;font-weight:800;line-height:1;color:var(--primary)}
+.primary .score-value{color:#4ade80}
+.score-unit{font-size:1rem;opacity:0.6}
+.score-tag{display:inline-block;margin-top:10px;padding:4px 12px;border-radius:50px;font-size:0.72rem;font-weight:700}
+.tag-clear{background:rgba(34,197,94,0.12);color:#16A34A}
+.tag-mild{background:rgba(234,179,8,0.12);color:#A16207}
+.tag-opacity{background:rgba(239,68,68,0.1);color:#DC2626}
+.score-desc{font-size:0.76rem;color:var(--muted);margin-top:8px;line-height:1.5}
+.primary .score-desc{color:rgba(255,255,255,0.4)}
+.chart-card{background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:20px}
+.chart-title{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:16px}
+.metrics-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.metric-mini{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:14px 12px;text-align:center}
+.metric-mini-val{font-family:'Sora',sans-serif;font-size:1.4rem;font-weight:800;color:var(--primary);line-height:1}
+.metric-mini-label{font-size:0.68rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:0.06em}
+.interp-card{background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;gap:16px}
+.interp-icon{font-size:1.8rem;flex-shrink:0;line-height:1}
+.interp-text h4{font-size:0.95rem;font-weight:700;margin-bottom:6px}
+.interp-text p{font-size:0.83rem;color:var(--muted);line-height:1.6}
+.interp-ranges{background:var(--bg);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.range-row{display:flex;align-items:center;gap:14px;padding:13px 18px;border-bottom:1px solid var(--border);font-size:0.83rem}
+.range-row:last-child{border-bottom:none}
+.range-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.range-val{font-weight:700;min-width:90px;font-family:'Sora',sans-serif;font-size:0.78rem}
+.range-label{color:var(--muted);flex:1}
+.range-row.active-range{background:rgba(37,99,235,0.04)}
+.new-scan-btn{
+  display:block;width:100%;padding:12px;border-radius:50px;
+  border:1.5px solid var(--border);background:var(--bg);color:var(--muted);
+  font-family:'Sora',sans-serif;font-size:0.85rem;font-weight:700;
+  cursor:pointer;transition:all 0.2s;text-align:center;
+}
+.new-scan-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── EVIDENCE ── */
+#evidence{background:var(--bg);border-top:1px solid var(--border)}
+.evidence-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px}
+@media(max-width:540px){.evidence-grid{grid-template-columns:1fr}}
+.evidence-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.evidence-ref{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:8px}
+.evidence-card h4{font-size:0.88rem;font-weight:700;margin-bottom:8px;color:var(--primary)}
+.evidence-card p{font-size:0.8rem;color:var(--muted);line-height:1.65}
+.method-note{
+  margin-top:24px;padding:18px 20px;
+  background:rgba(37,99,235,0.05);border-left:3px solid var(--accent);
+  border-radius:0 10px 10px 0;
+  font-size:0.85rem;color:var(--primary);line-height:1.7;
+}
+
+/* ── DISCLAIMER ── */
+#disclaimer{background:#FFFBEB;border-top:1px solid #FDE68A}
+.disclaimer-box{
+  background:#fff;border:1.5px solid #FCD34D;border-radius:var(--radius);
+  padding:24px 22px;display:flex;gap:14px;align-items:flex-start;
+}
+.disclaimer-icon{font-size:1.6rem;flex-shrink:0;line-height:1;margin-top:2px}
+.disclaimer-title{font-size:1rem;font-weight:700;color:#92400E;margin-bottom:8px}
+.disclaimer-body{font-size:0.83rem;color:#78350F;line-height:1.7}
+
+/* ── FOOTER ── */
+footer{background:var(--primary);color:rgba(255,255,255,0.55);padding:48px 20px 36px;text-align:center}
+.footer-logo{font-family:'Sora',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;letter-spacing:-0.02em;margin-bottom:4px}
+.footer-logo em{color:#60a5fa;font-style:normal}
+.footer-tagline{font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:28px}
+.footer-divider{height:1px;background:rgba(255,255,255,0.1);max-width:320px;margin:0 auto 24px}
+.footer-creator{font-size:0.88rem;color:rgba(255,255,255,0.55)}
+.footer-creator strong{color:rgba(255,255,255,0.8)}
+.footer-univ{font-size:0.78rem;color:rgba(255,255,255,0.3);margin-top:6px}
+.footer-legal{font-size:0.7rem;color:rgba(255,255,255,0.2);margin-top:20px}
+
+/* ── UTILS ── */
+.hidden{display:none!important}
+.reveal{opacity:0;transform:translateY(16px);transition:opacity 0.5s ease,transform 0.5s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .score-row{grid-template-columns:1fr}
+  .metrics-row{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">Lens<em>ight</em> 2.1</div>
+  <button class="nav-btn" onclick="document.getElementById('scanner').scrollIntoView({behavior:'smooth'})">Start Scan</button>
+</nav>
+
+<!-- 1. HERO -->
+<section id="hero">
+  <div class="hero-content">
+    <div class="hero-pill">
+      <span class="hero-pill-dot"></span>
+      Prototype · Educational · v2.1
+    </div>
+    <h1 class="hero-title">Lens<em>ight</em><br>2.1</h1>
+    <p class="hero-tagline">See Beyond Vision</p>
+    <p class="hero-sub">A lightweight lens scattering screening prototype using smartphone imaging and radial intensity analysis.</p>
+    <div class="hero-badges">
+      <span class="badge">📱 Mobile-First</span>
+      <span class="badge">⚡ Lightweight</span>
+      <span class="badge">🔬 Science-Grounded</span>
+      <span class="badge">🔒 100% Offline</span>
+    </div>
+    <button class="hero-cta" onclick="document.getElementById('scanner').scrollIntoView({behavior:'smooth'})">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>
+      Begin Screening
+    </button>
+    <div class="hero-scroll">
+      <div class="hero-scroll-line"></div>
+      <span>Scroll to explore</span>
+    </div>
+  </div>
+</section>
+
+<!-- 2. SCIENTIFIC INSIGHT -->
+<section id="insight">
+  <div class="wrap reveal">
+    <p class="eyebrow">The Science</p>
+    <h2 class="section-title">Why Lens Clarity Matters</h2>
+    <p class="section-body">The eye lens must remain optically clear to focus incoming light onto the retina. Three mechanisms govern this — all estimable through image analysis.</p>
+    <div class="insight-grid">
+      <div class="insight-card">
+        <div class="insight-icon" style="background:rgba(37,99,235,0.08)">🔬</div>
+        <h4>Protein Order</h4>
+        <p>Lens transparency depends on the short-range ordered arrangement of crystallin proteins that allows coherent light transmission.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-icon" style="background:rgba(234,179,8,0.1)">⚗️</div>
+        <h4>Aggregation</h4>
+        <p>Aging and oxidative stress cause proteins to clump, disrupting the ordered lattice and increasing local refractive index variation.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-icon" style="background:rgba(34,197,94,0.09)">💡</div>
+        <h4>Brightness Distribution</h4>
+        <p>In a clear lens under close-range illumination, reflected light concentrates centrally. Scatter redistributes brightness peripherally.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. INSTRUCTIONS -->
+<section id="instructions">
+  <div class="wrap reveal">
+    <p class="eyebrow">Before You Begin</p>
+    <h2 class="section-title">Screening Instructions</h2>
+    <p class="section-body">Follow these steps carefully. Environmental control improves measurement consistency.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body"><h4>Use Rear Camera</h4><p>The rear camera offers higher resolution and better optics than the front-facing camera.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body"><h4>Dim the Room</h4><p>Reduce ambient lighting so your pupil dilates, making the lens interior more visible.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body"><h4>Enable Flash</h4><p>Turn on flash if supported — it illuminates the lens interior and reveals scattering patterns.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body"><h4>10–15 cm Distance</h4><p>Hold the phone close enough that the eye fills the alignment guide. Too far reduces resolution.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body"><h4>Align Pupil in Center</h4><p>Keep your pupil centered within the circular alignment ring before pressing capture.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. SCANNER -->
+<section id="scanner">
+  <div class="wrap reveal">
+    <p class="eyebrow">Live Camera</p>
+    <h2 class="section-title">Eye Scanner</h2>
+    <p class="section-body">Position your pupil inside the alignment ring. Rear camera gives the best result.</p>
+    <div class="scanner-card">
+      <div class="video-container">
+        <video id="liveVideo" autoplay playsinline muted></video>
+        <div class="cam-overlay"><div class="align-ring"></div></div>
+        <div class="cam-label">Align pupil inside the ring</div>
+      </div>
+      <div class="cam-controls">
+        <button class="cam-btn" id="switchBtn" onclick="switchCamera()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 4v6h6"/><path d="M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+          Flip Camera
+        </button>
+        <button class="cam-btn" id="flashBtn" onclick="toggleFlash()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Flash: Off
+        </button>
+      </div>
+      <button class="capture-btn" id="captureBtn" disabled onclick="captureFrame()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg>
+        Capture Image
+      </button>
+      <div class="cam-status" id="camStatus">Initializing camera…</div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. CAPTURE & CROP -->
+<section id="cropSection">
+  <div class="wrap reveal">
+    <p class="eyebrow">Image Preparation</p>
+    <h2 class="section-title">Capture &amp; Crop</h2>
+    <p class="section-body">Drag the blue box to center it over your pupil. Drag the bottom-right corner to resize.</p>
+    <div class="crop-card">
+      <div class="crop-wrap" id="cropWrap">
+        <div class="crop-empty" id="cropEmpty">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+          <p>Capture an image using the scanner above</p>
+        </div>
+        <canvas id="captureCanvas" class="hidden"></canvas>
+        <div class="crop-box hidden" id="cropBox"
+             ontouchstart="startDrag(event,false)" onmousedown="startDrag(event,false)">
+          <div class="crop-corner tl"></div>
+          <div class="crop-corner tr"></div>
+          <div class="crop-corner bl"></div>
+          <div class="crop-corner br" id="resizeHandle"
+               ontouchstart="startDrag(event,true)" onmousedown="startDrag(event,true)"></div>
+        </div>
+      </div>
+      <p class="crop-hint hidden" id="cropHint">Drag to reposition · Drag corner ↘ to resize</p>
+      <div class="crop-actions hidden" id="cropActions">
+        <button class="act-btn act-retake" onclick="retakePhoto()">↩ Retake</button>
+        <button class="act-btn act-confirm" id="confirmBtn" onclick="confirmCrop()">✓ Confirm &amp; Analyse</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. ANALYSIS -->
+<section id="analysisSection">
+  <div class="wrap reveal">
+    <p class="eyebrow">Processing</p>
+    <h2 class="section-title">Scatter Analysis</h2>
+    <p class="section-body">Radial intensity profiling measures brightness from the lens center outward — a simplified proxy for light scattering detection.</p>
+    <div id="analysisIdle" class="analysis-idle">
+      <div style="font-size:2rem">🔬</div>
+      <p id="analysisMsg">Confirm a cropped region above to unlock the analysis engine.</p>
+      <button class="run-btn" id="runBtn" disabled onclick="runAnalysis()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Run Analysis
+      </button>
+    </div>
+    <div class="analysis-progress hidden" id="analysisProgress">
+      <p class="progress-label" id="progressLabel">Processing…</p>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-steps">
+        <div class="progress-step" id="ps1"><span class="progress-step-dot"></span>Grayscale conversion &amp; downscale to 150×150</div>
+        <div class="progress-step" id="ps2"><span class="progress-step-dot"></span>Crop center estimation</div>
+        <div class="progress-step" id="ps3"><span class="progress-step-dot"></span>Radial intensity profiling</div>
+        <div class="progress-step" id="ps4"><span class="progress-step-dot"></span>Scatter Index computation</div>
+        <div class="progress-step" id="ps5"><span class="progress-step-dot"></span>Transparency Score &amp; chart preparation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. RESULTS -->
+<section id="results">
+  <div class="wrap reveal">
+    <p class="eyebrow">Diagnostic Output</p>
+    <h2 class="section-title">Results</h2>
+    <p class="section-body">Scores are derived from radial brightness analysis. This is an experimental educational estimate only.</p>
+    <div id="resultsEmpty" class="results-empty">Complete the scan, crop, and analysis to see your results here.</div>
+    <div id="resultsPanel" class="results-panel hidden"></div>
+  </div>
+</section>
+
+<!-- 8. SCIENTIFIC EVIDENCE -->
+<section id="evidence">
+  <div class="wrap reveal">
+    <p class="eyebrow">Scientific Foundation</p>
+    <h2 class="section-title">Scientific Evidence</h2>
+    <p class="section-body">Lensight's analytical approach draws from established biomedical optics research on lens transparency and scattering.</p>
+    <div class="evidence-grid">
+      <div class="evidence-card">
+        <div class="evidence-ref">Benedek, G.B. — 1971</div>
+        <h4>Theory of Transparency of the Eye</h4>
+        <p><em>Investigative Ophthalmology.</em> Established that lens transparency requires short-range ordered crystallin protein arrangement. Protein aggregation disrupts this order, producing observable light scattering increasing with cataract severity.</p>
+      </div>
+      <div class="evidence-card">
+        <div class="evidence-ref">Datiles et al. — 1991</div>
+        <h4>Light Scattering in the Human Lens</h4>
+        <p><em>Archives of Ophthalmology.</em> Demonstrated that dynamic light scattering detects early cataractous changes before clinical symptoms appear — validating scattering intensity as a quantifiable early-stage biomarker.</p>
+      </div>
+    </div>
+    <div class="method-note">
+      <strong>On Radial Intensity Analysis:</strong> In a healthy lens illuminated from close range, reflected light concentrates centrally. Protein aggregates scatter photons outward, elevating peripheral brightness relative to central brightness. The Scatter Index (peripheral ÷ central) captures this redistribution as a dimensionless metric — a simplified, non-clinical approximation of clinical retroillumination photography.
+    </div>
+  </div>
+</section>
+
+<!-- 9. DISCLAIMER -->
+<section id="disclaimer">
+  <div class="wrap reveal">
+    <div class="disclaimer-box">
+      <div class="disclaimer-icon">⚠️</div>
+      <div>
+        <div class="disclaimer-title">Important Disclaimer</div>
+        <p class="disclaimer-body">
+          <strong>Lensight 2.1 is an experimental educational prototype.</strong> It does not constitute medical advice, clinical diagnosis, or a certified medical device. The Lens Transparency Score and Scatter Index are simplified computational estimates from smartphone imagery with no clinical validity.<br><br>
+          If you have concerns about your vision or eye health, consult a qualified ophthalmologist for a comprehensive clinical evaluation.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10. FOOTER -->
+<footer>
+  <div class="footer-logo">Lens<em>ight</em> 2.1</div>
+  <div class="footer-tagline">See Beyond Vision</div>
+  <div class="footer-divider"></div>
+  <div class="footer-creator">Created by <strong>Naufa Nufail</strong></div>
+  <div class="footer-univ">Faculty of Medicine — Diponegoro University</div>
+  <div class="footer-legal">© 2025 Lensight · Experimental Prototype · Not for Clinical Use</div>
+</footer>
+
+<script>
+'use strict';
+
+/* ─── SCROLL REVEAL ─────────────────────────────────────── */
+const revObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revObserver.observe(el));
+
+/* ─── CAMERA ─────────────────────────────────────────────── */
+let mediaStream    = null;
+let facingMode     = 'environment';
+let flashEnabled   = false;
+let videoTrack     = null;
+let flashSupported = false;
+
+async function startCamera() {
+  if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+  const st = document.getElementById('camStatus');
+  st.className = 'cam-status';
+  st.textContent = 'Starting camera…';
+
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode, width: { ideal: 640 }, height: { ideal: 480 } },
+      audio: false
+    });
+    const video = document.getElementById('liveVideo');
+    video.srcObject = mediaStream;
+    await video.play();
+    videoTrack = mediaStream.getVideoTracks()[0];
+
+    const caps = videoTrack.getCapabilities ? videoTrack.getCapabilities() : {};
+    flashSupported = !!(caps && caps.torch);
+    const fb = document.getElementById('flashBtn');
+    fb.style.opacity = flashSupported ? '1' : '0.4';
+
+    document.getElementById('captureBtn').disabled = false;
+    st.className = 'cam-status ok';
+    st.textContent = '● Camera active — ' + (facingMode === 'environment' ? 'Rear' : 'Front');
+  } catch (err) {
+    document.getElementById('captureBtn').disabled = true;
+    const st2 = document.getElementById('camStatus');
+    st2.className = 'cam-status err';
+    st2.textContent = '✕ ' + err.message;
+  }
+}
+
+async function switchCamera() {
+  facingMode = facingMode === 'environment' ? 'user' : 'environment';
+  flashEnabled = false;
+  document.getElementById('flashBtn').textContent = '⚡ Flash: Off';
+  document.getElementById('flashBtn').classList.remove('active');
+  await startCamera();
+}
+
+async function toggleFlash() {
+  if (!videoTrack) return;
+  if (!flashSupported) {
+    document.getElementById('camStatus').textContent = 'Flash not supported on this device.';
+    return;
+  }
+  flashEnabled = !flashEnabled;
+  try {
+    await videoTrack.applyConstraints({ advanced: [{ torch: flashEnabled }] });
+    const fb = document.getElementById('flashBtn');
+    fb.textContent = (flashEnabled ? '🔦' : '⚡') + ' Flash: ' + (flashEnabled ? 'On' : 'Off');
+    fb.classList.toggle('active', flashEnabled);
+  } catch (e) {
+    document.getElementById('camStatus').textContent = 'Flash error: ' + e.message;
+  }
+}
+
+// Auto-start when scanner scrolled into view
+const camObs = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting && !mediaStream) startCamera();
+}, { threshold: 0.25 });
+camObs.observe(document.getElementById('scanner'));
+
+/* ─── CAPTURE ───────────────────────────────────────────── */
+let imgNatW = 0, imgNatH = 0;
+
+function captureFrame() {
+  const video  = document.getElementById('liveVideo');
+  const canvas = document.getElementById('captureCanvas');
+  imgNatW = video.videoWidth  || 640;
+  imgNatH = video.videoHeight || 480;
+  canvas.width  = imgNatW;
+  canvas.height = imgNatH;
+  canvas.getContext('2d').drawImage(video, 0, 0, imgNatW, imgNatH);
+
+  document.getElementById('cropEmpty').classList.add('hidden');
+  canvas.classList.remove('hidden');
+  initCropBox();
+
+  document.getElementById('cropHint').classList.remove('hidden');
+  document.getElementById('cropActions').classList.remove('hidden');
+  document.getElementById('cropSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+function retakePhoto() {
+  document.getElementById('captureCanvas').classList.add('hidden');
+  document.getElementById('cropEmpty').classList.remove('hidden');
+  document.getElementById('cropBox').classList.add('hidden');
+  document.getElementById('cropHint').classList.add('hidden');
+  document.getElementById('cropActions').classList.add('hidden');
+  document.getElementById('runBtn').disabled = true;
+  document.getElementById('analysisMsg').textContent = 'Confirm a cropped region above to unlock the analysis engine.';
+  hasCrop = false;
+  document.getElementById('scanner').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ─── CROP ──────────────────────────────────────────────── */
+let crop = { x: 0, y: 0, w: 0, h: 0 };
+let hasCrop    = false;
+let dragType   = null;  // 'move' | 'resize'
+let dragStart  = { mx: 0, my: 0, cx: 0, cy: 0, cw: 0, ch: 0 };
+
+function initCropBox() {
+  const canvas = document.getElementById('captureCanvas');
+  // Wait a tick for layout
+  requestAnimationFrame(() => {
+    const dW = canvas.offsetWidth  || 320;
+    const dH = canvas.offsetHeight || 240;
+    const sz = Math.min(dW, dH) * 0.52;
+    crop = { x: (dW - sz) / 2, y: (dH - sz) / 2, w: sz, h: sz };
+    renderCropBox();
+    document.getElementById('cropBox').classList.remove('hidden');
+  });
+}
+
+function renderCropBox() {
+  const el = document.getElementById('cropBox');
+  el.style.left   = crop.x + 'px';
+  el.style.top    = crop.y + 'px';
+  el.style.width  = crop.w + 'px';
+  el.style.height = crop.h + 'px';
+}
+
+function getXY(e) {
+  return e.touches && e.touches.length
+    ? { x: e.touches[0].clientX, y: e.touches[0].clientY }
+    : { x: e.clientX, y: e.clientY };
+}
+
+function startDrag(e, isResize) {
+  e.preventDefault();
+  e.stopPropagation();
+  const { x, y } = getXY(e);
+  dragType  = isResize ? 'resize' : 'move';
+  dragStart = { mx: x, my: y, cx: crop.x, cy: crop.y, cw: crop.w, ch: crop.h };
+}
+
+function onMove(e) {
+  if (!dragType) return;
+  e.preventDefault();
+  const { x, y } = getXY(e);
+  const dx = x - dragStart.mx, dy = y - dragStart.my;
+  const canvas = document.getElementById('captureCanvas');
+  const maxW   = canvas.offsetWidth  || 320;
+  const maxH   = canvas.offsetHeight || 240;
+
+  if (dragType === 'move') {
+    crop.x = Math.max(0, Math.min(maxW - crop.w, dragStart.cx + dx));
+    crop.y = Math.max(0, Math.min(maxH - crop.h, dragStart.cy + dy));
+  } else {
+    crop.w = Math.min(Math.max(40, dragStart.cw + dx), maxW - crop.x);
+    crop.h = Math.min(Math.max(40, dragStart.ch + dy), maxH - crop.y);
+  }
+  renderCropBox();
+}
+
+function endDrag() { dragType = null; }
+
+window.addEventListener('mousemove',  onMove, { passive: false });
+window.addEventListener('touchmove',  onMove, { passive: false });
+window.addEventListener('mouseup',    endDrag);
+window.addEventListener('touchend',   endDrag);
+
+function confirmCrop() {
+  hasCrop = true;
+  document.getElementById('runBtn').disabled = false;
+  document.getElementById('analysisMsg').textContent = '✓ Crop confirmed. Press Run Analysis to process.';
+  document.getElementById('analysisSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ─── ANALYSIS ENGINE ───────────────────────────────────── */
+let chartInst = null;
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function setStep(id, state) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('active', 'done');
+  if (state) el.classList.add(state);
+}
+
+async function runAnalysis() {
+  if (!hasCrop) return;
+  const runBtn = document.getElementById('runBtn');
+  runBtn.disabled = true;
+  runBtn.textContent = 'Running…';
+
+  document.getElementById('analysisIdle').classList.add('hidden');
+  const prog = document.getElementById('analysisProgress');
+  prog.classList.remove('hidden');
+  const fill  = document.getElementById('progressFill');
+  const label = document.getElementById('progressLabel');
+
+  const STEPS = [
+    { id: 'ps1', pct:  20, msg: 'Converting to grayscale & downscaling…' },
+    { id: 'ps2', pct:  40, msg: 'Estimating lens center…' },
+    { id: 'ps3', pct:  65, msg: 'Computing radial intensity profile…' },
+    { id: 'ps4', pct:  85, msg: 'Calculating Scatter Index…' },
+    { id: 'ps5', pct: 100, msg: 'Deriving Transparency Score…' }
+  ];
+
+  for (let i = 0; i < STEPS.length; i++) {
+    if (i > 0) setStep(STEPS[i-1].id, 'done');
+    setStep(STEPS[i].id, 'active');
+    fill.style.width = STEPS[i].pct + '%';
+    label.textContent = STEPS[i].msg;
+    await sleep(380);
+  }
+  setStep('ps5', 'done');
+  label.textContent = 'Analysis complete!';
+
+  const result = compute();
+  renderResults(result);
+
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+  runBtn.textContent = 'Run Analysis';
+  runBtn.disabled = false;
+}
+
+function compute() {
+  const canvas = document.getElementById('captureCanvas');
+  const dispW  = canvas.offsetWidth  || 320;
+  const dispH  = canvas.offsetHeight || 240;
+  const scaleX = imgNatW / dispW;
+  const scaleY = imgNatH / (dispH || dispW);
+
+  // Map display crop coords → source image coords
+  const srcX = Math.max(0, Math.round(crop.x * scaleX));
+  const srcY = Math.max(0, Math.round(crop.y * scaleY));
+  const srcW = Math.max(4, Math.round(crop.w * scaleX));
+  const srcH = Math.max(4, Math.round(crop.h * scaleY));
+
+  // Downscale to TARGET × TARGET
+  const TARGET = 150;
+  const work = document.createElement('canvas');
+  work.width = work.height = TARGET;
+  work.getContext('2d').drawImage(canvas, srcX, srcY, srcW, srcH, 0, 0, TARGET, TARGET);
+
+  const pxData = work.getContext('2d').getImageData(0, 0, TARGET, TARGET).data;
+
+  // Grayscale
+  const gray = new Float32Array(TARGET * TARGET);
+  for (let i = 0; i < TARGET * TARGET; i++) {
+    gray[i] = 0.299 * pxData[i*4] + 0.587 * pxData[i*4+1] + 0.114 * pxData[i*4+2];
+  }
+
+  // Center = crop center
+  const cx = TARGET / 2, cy = TARGET / 2;
+  const maxR = Math.floor(Math.min(cx, cy));
+
+  // Radial bins
+  const bins   = new Float64Array(maxR);
+  const counts = new Uint32Array(maxR);
+  for (let py = 0; py < TARGET; py++) {
+    for (let px = 0; px < TARGET; px++) {
+      const r = Math.round(Math.sqrt((px - cx) ** 2 + (py - cy) ** 2));
+      if (r < maxR) { bins[r] += gray[py * TARGET + px]; counts[r]++; }
+    }
+  }
+
+  const rawProfile = new Array(maxR);
+  for (let r = 0; r < maxR; r++) {
+    rawProfile[r] = counts[r] > 0 ? bins[r] / counts[r] : 0;
+  }
+
+  // Smooth (window 3)
+  const profile = rawProfile.map((_, i, a) => {
+    const s = a.slice(Math.max(0, i-2), i+3);
+    return s.reduce((acc, v) => acc + v, 0) / s.length;
+  });
+
+  // Central = inner 15%
+  const cEnd = Math.max(2, Math.floor(maxR * 0.15));
+  let cSum = 0;
+  for (let r = 0; r < cEnd; r++) cSum += profile[r];
+  const centralI = cEnd > 0 ? cSum / cEnd : 1;
+
+  // Peripheral = 55–80%
+  const pStart = Math.floor(maxR * 0.55), pEnd = Math.floor(maxR * 0.80);
+  let pSum = 0, pCnt = 0;
+  for (let r = pStart; r < pEnd && r < profile.length; r++) { pSum += profile[r]; pCnt++; }
+  const periI = pCnt > 0 ? pSum / pCnt : 0;
+
+  const scatterIndex      = +(periI / Math.max(1, centralI)).toFixed(4);
+  const transparencyScore = +(1 / (1 + scatterIndex)).toFixed(4);
+
+  return {
+    profile, maxR, scatterIndex, transparencyScore,
+    centralI:  +centralI.toFixed(1),
+    periI:     +periI.toFixed(1)
+  };
+}
+
+function getInterp(score) {
+  if (score >= 0.85) return {
+    label: 'Clear Lens', cls: 'tag-clear', icon: '✅',
+    text: 'Lens transparency is within the expected range for this experimental metric. Scatter distribution appears predominantly central.'
+  };
+  if (score >= 0.70) return {
+    label: 'Mild Scatter', cls: 'tag-mild', icon: '⚠️',
+    text: 'Mild peripheral scatter detected. This could indicate early protein redistribution. Professional evaluation is recommended.'
+  };
+  return {
+    label: 'Possible Opacity', cls: 'tag-opacity', icon: '🔴',
+    text: 'Elevated scatter index observed. This may suggest lens opacity. Please consult an ophthalmologist for clinical assessment.'
+  };
+}
+
+function renderResults(d) {
+  const { profile, maxR, scatterIndex, transparencyScore, centralI, periI } = d;
+  const interp = getInterp(transparencyScore);
+  const pct    = (transparencyScore * 100).toFixed(1);
+
+  const r1 = transparencyScore >= 0.85  ? 'active-range' : '';
+  const r2 = (transparencyScore >= 0.70 && transparencyScore < 0.85) ? 'active-range' : '';
+  const r3 = transparencyScore < 0.70   ? 'active-range' : '';
+
+  const panel = document.getElementById('resultsPanel');
+  document.getElementById('resultsEmpty').classList.add('hidden');
+  panel.classList.remove('hidden');
+
+  panel.innerHTML = `
+    <div class="score-row">
+      <div class="score-card primary">
+        <div class="score-label">Transparency Score</div>
+        <div class="score-value">${pct}<span class="score-unit">%</span></div>
+        <span class="score-tag ${interp.cls}">${interp.label}</span>
+        <p class="score-desc">LTS = 1 ÷ (1 + ScatterIndex)</p>
+      </div>
+      <div class="score-card">
+        <div class="score-label">Scatter Index</div>
+        <div class="score-value" style="color:var(--accent);font-size:2.4rem">${scatterIndex.toFixed(3)}</div>
+        <p class="score-desc" style="margin-top:10px">Peripheral ÷ Central<br>brightness ratio</p>
+      </div>
+    </div>
+
+    <div class="metrics-row">
+      <div class="metric-mini">
+        <div class="metric-mini-val">${centralI}</div>
+        <div class="metric-mini-label">Central</div>
+      </div>
+      <div class="metric-mini">
+        <div class="metric-mini-val">${periI}</div>
+        <div class="metric-mini-label">Peripheral</div>
+      </div>
+      <div class="metric-mini">
+        <div class="metric-mini-val">${maxR}</div>
+        <div class="metric-mini-label">Radii</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">Radial Intensity Profile — Brightness vs Radius</div>
+      <canvas id="radialChart"></canvas>
+    </div>
+
+    <div class="interp-card">
+      <div class="interp-icon">${interp.icon}</div>
+      <div class="interp-text">
+        <h4>${interp.label}</h4>
+        <p>${interp.text}</p>
+      </div>
+    </div>
+
+    <div class="interp-ranges">
+      <div class="range-row ${r1}">
+        <div class="range-dot" style="background:#22C55E"></div>
+        <div class="range-val">0.85 – 1.00</div>
+        <div class="range-label">Clear Lens</div>
+        ${r1 ? '<span style="font-size:0.72rem;color:var(--accent);font-weight:700">← Your result</span>' : ''}
+      </div>
+      <div class="range-row ${r2}">
+        <div class="range-dot" style="background:#EAB308"></div>
+        <div class="range-val">0.70 – 0.85</div>
+        <div class="range-label">Mild Scatter</div>
+        ${r2 ? '<span style="font-size:0.72rem;color:var(--accent);font-weight:700">← Your result</span>' : ''}
+      </div>
+      <div class="range-row ${r3}">
+        <div class="range-dot" style="background:#EF4444"></div>
+        <div class="range-val">below 0.70</div>
+        <div class="range-label">Possible Opacity</div>
+        ${r3 ? '<span style="font-size:0.72rem;color:var(--accent);font-weight:700">← Your result</span>' : ''}
+      </div>
+    </div>
+
+    <button class="new-scan-btn" onclick="document.getElementById('scanner').scrollIntoView({behavior:'smooth'})">↩ New Scan</button>
+  `;
+
+  // Build chart
+  const labels = Array.from({ length: profile.length }, (_, i) => i);
+  if (chartInst) chartInst.destroy();
+  chartInst = new Chart(
+    document.getElementById('radialChart').getContext('2d'),
+    {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Radial Brightness',
+            data: profile,
+            borderColor: 'rgba(37,99,235,0.9)',
+            backgroundColor: 'rgba(37,99,235,0.10)',
+            fill: true, tension: 0.4,
+            pointRadius: 0, borderWidth: 2
+          },
+          {
+            // Central region indicator
+            label: 'Central Region',
+            data: labels.map(r => r <= Math.floor(maxR * 0.15) ? Math.max(...profile) * 1.05 : null),
+            borderColor: 'rgba(34,197,94,0.55)',
+            backgroundColor: 'rgba(34,197,94,0.07)',
+            fill: true, tension: 0,
+            pointRadius: 0, borderWidth: 1,
+            borderDash: [5, 4]
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: {
+            labels: {
+              font: { family: 'Inter', size: 11 },
+              usePointStyle: true, pointStyleWidth: 8
+            }
+          }
+        },
+        scales: {
+          x: {
+            title: { display: true, text: 'Radius (px)', font: { family: 'Inter', size: 10 }, color: '#94a3b8' },
+            ticks: { font: { family: 'Inter', size: 10 }, color: '#94a3b8', maxTicksLimit: 8 },
+            grid:  { color: 'rgba(226,232,240,0.7)' }
+          },
+          y: {
+            title: { display: true, text: 'Mean Brightness', font: { family: 'Inter', size: 10 }, color: '#94a3b8' },
+            ticks: { font: { family: 'Inter', size: 10 }, color: '#94a3b8' },
+            grid:  { color: 'rgba(226,232,240,0.7)' }
+          }
+        }
+      }
+    }
+  );
+}
+</script>
+</body>
+</html>
